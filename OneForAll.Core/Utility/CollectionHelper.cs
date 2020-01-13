@@ -1,15 +1,14 @@
-﻿using OneForAll.Core.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OneForAll.Core.Extension
+namespace OneForAll.Core.Utility
 {
     /// <summary>
-    /// 扩展类：集合
+    /// 帮助类：集合
     /// </summary>
-    public static class CollectionExtension
+    public static class CollectionHelper
     {
         /// <summary>
         /// 遍历
@@ -17,9 +16,12 @@ namespace OneForAll.Core.Extension
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="list">集合</param>
         /// <param name="action">遍历方法</param>
-        public static void ForEach<T>(this IEnumerable<T> list, Action<T> action)
+        public static void ForEach<T>(IEnumerable<T> list, Action<T> action)
         {
-            CollectionHelper.ForEach(list, action);
+            foreach (var item in list)
+            {
+                action(item);
+            }
         }
 
         /// <summary>
@@ -32,11 +34,25 @@ namespace OneForAll.Core.Extension
         /// <param name="deep">是否递归查找</param>
         /// <returns>子级列表</returns>
         public static IEnumerable<T> FindChildren<T, TKey>(
-            this IEnumerable<T> list,
+            IEnumerable<T> list,
             T parent,
             bool deep = true) where T : IEntity<TKey>, IParent<TKey>
         {
-            return CollectionHelper.FindChildren<T, TKey>(list, parent, deep);
+            var result = new List<T>();
+            var children = list.Where(w => w.ParentId.Equals(parent.Id)).ToList();
+            if (children.Count > 0)
+            {
+                result.AddRange(children);
+                if (deep)
+                {
+                    children.ForEach(e =>
+                    {
+                        var deepChildren = FindChildren<T, TKey>(list, e, deep);
+                        if (deepChildren.Count() > 0) result.AddRange(deepChildren);
+                    });
+                }
+            }
+            return result;
         }
     }
 }

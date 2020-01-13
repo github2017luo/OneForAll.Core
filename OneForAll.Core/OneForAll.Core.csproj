@@ -5,13 +5,13 @@
     <Description>OneForAll核心类库：主要为通用接口、对象、帮助类（编码、字符串处理、常用正则、扩展方法、加密解密）</Description>
     <Authors>xhp</Authors>
     <Copyright>xhp</Copyright>
-    <PackageProjectUrl>https://github.com/514933266/OneForAll-Framework</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/514933266/OneForAll.Core</PackageProjectUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <RepositoryUrl>https://github.com/514933266/OneForAll-Framework</RepositoryUrl>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <RepositoryUrl>https://github.com/514933266/OneForAll.Core.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
