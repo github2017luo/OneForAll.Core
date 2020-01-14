@@ -36,7 +36,7 @@ namespace OneForAll.Core.Utility
         public static IEnumerable<T> FindChildren<T, TKey>(
             IEnumerable<T> list,
             T parent,
-            bool deep = true) where T : IEntity<TKey>, IParent<TKey>
+            bool deep = true) where T : IEntity<TKey>, IParent<TKey>, new ()
         {
             var result = new List<T>();
             var children = list.Where(w => w.ParentId.Equals(parent.Id)).ToList();
@@ -53,6 +53,100 @@ namespace OneForAll.Core.Utility
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// 查找子级
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="parentId">父级id</param>
+        /// <param name="deep">是否递归查找</param>
+        /// <returns>子级列表</returns>
+        public static IEnumerable<T> FindChildren<T, TKey>(
+            IEnumerable<T> list,
+            TKey parentId,
+            bool deep = true) where T : IEntity<TKey>, IParent<TKey>, new()
+        {
+            var obj = new T() { Id = parentId };
+            return FindChildren<T, TKey>(list, obj, deep);
+        }
+
+        /// <summary>
+        /// 查找父级
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="entity">父级</param>
+        /// <returns>父级</returns>
+        public static T FindParent<T, TKey>(
+            IEnumerable<T> list,
+            T entity) where T : IEntity<TKey>, IParent<TKey>, new()
+        {
+            var key = default(TKey);
+            if (!entity.ParentId.Equals(key))
+            {
+                // 禁止查找子级
+                var children = FindChildren(list, entity.Id);
+                var parent = children.FirstOrDefault(w => w.Id.Equals(entity.ParentId));
+                if (parent != null) return default;
+
+                parent = list.FirstOrDefault(w => w.Id.Equals(entity.ParentId));
+                if (parent != null) return parent;
+            }
+            return default;
+        }
+
+        /// <summary>
+        /// 查找父级
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="id">id</param>
+        /// <param name="parentId">父级id</param>
+        /// <returns>父级</returns>
+        public static T FindParent<T, TKey>(
+            IEnumerable<T> list,
+            TKey id,
+            TKey parentId) where T : IEntity<TKey>, IParent<TKey>, new()
+        {
+            var parent = new T() { Id = id, ParentId = parentId };
+            return FindParent<T, TKey>(list, parent);
+        }
+
+        /// <summary>
+        /// 转换树形式
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <returns>树</returns>
+        public static IEnumerable<T> ConverToTree<T, TKey>(
+            IEnumerable<T> list) where T : IEntity<TKey>, IParent<TKey>, IChildren<T>, new()
+        {
+            var key = default(TKey);
+            var tops = list.Where(w => w.ParentId.Equals(key))
+                .ToList();
+
+            tops.ForEach(e =>
+            {
+                ConverToTree<T, TKey>(list, e);
+            });
+            return tops;
+        }
+
+        private static void ConverToTree<T, TKey>(
+            IEnumerable<T> list,
+            T parent) where T : IEntity<TKey>, IParent<TKey>, IChildren<T>, new()
+        {
+            parent.Children = list.Where(w => w.ParentId.Equals(parent.Id)).ToList();
+            foreach(var item in parent.Children)
+            {
+                ConverToTree<T, TKey>(list, item);
+            }
         }
     }
 }
