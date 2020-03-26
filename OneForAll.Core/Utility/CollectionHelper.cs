@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OneForAll.Core.Extension;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -88,7 +89,6 @@ namespace OneForAll.Core.Utility
             var key = default(TKey);
             if (!entity.ParentId.Equals(key))
             {
-                // 禁止查找子级
                 var children = FindChildren(list, entity.Id);
                 var parent = children.FirstOrDefault(w => w.Id.Equals(entity.ParentId));
                 if (parent != null) return default;
@@ -147,6 +147,33 @@ namespace OneForAll.Core.Utility
             {
                 ConverToTree<T, TKey>(list, item);
             }
+        }
+
+        /// <summary>
+        /// 查找节点
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="id">id</param>
+        /// <returns>节点</returns>
+        public static T FindNode<T, TKey>(
+            IEnumerable<T> list,
+            TKey id) where T : IEntity<TKey>, IChildren<T>, new()
+        {
+            var node = list.Where(w => w.Id.Equals(id)).FirstOrDefault();
+            if (node == null)
+            {
+                for (var i = 0; i < list.Count(); i++)
+                {
+                    var deepNode = FindNode(list.ElementAt(i).Children, id);
+                    if (deepNode != null)
+                    {
+                        return deepNode;
+                    }
+                }
+            }
+            return node;
         }
     }
 }

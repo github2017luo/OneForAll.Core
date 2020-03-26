@@ -100,5 +100,20 @@ namespace OneForAll.Core.Extension
         {
             return CollectionHelper.ConverToTree<T, TKey>(list);
         }
+
+        /// <summary>
+        /// 查找节点
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <typeparam name="TKey">主键类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="id">id</param>
+        /// <returns>节点</returns>
+        public static T FindNode<T, TKey>(
+            this IEnumerable<T> list,
+            TKey id) where T : IEntity<TKey>, IChildren<T>, new()
+        {
+            return CollectionHelper.FindNode(list, id);
+        }
     }
 }

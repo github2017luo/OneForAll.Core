@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OneForAll.Core.Utility
+namespace OneForAll.Core
 {
     /// <summary>
     /// 表格验证结果

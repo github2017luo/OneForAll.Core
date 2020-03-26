@@ -43,6 +43,13 @@ namespace OneForAll.Core.Test
             var guid = default(Guid);
             var tree = list.ToTree<Tree, int>();
         }
+
+        [TestMethod()]
+        public void FindNode()
+        {
+            var tree = list.ToTree<Tree, int>();
+            var item = list.FindNode(1);
+        }
     }
 
     public class Tree : IEntity<int>, IParent<int>, IChildren<Tree>

@@ -325,6 +325,7 @@ namespace OneForAll.Core.Utility
                     {
                         try
                         {
+                            if (j > props.Length) break;
                             var p = props[j];
                             if (p.PropertyType.IsEnum)
                             {
